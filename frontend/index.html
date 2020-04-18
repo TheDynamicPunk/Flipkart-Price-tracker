@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Tracker</title>
+</head>
+<body>
+    <h1>Paste all the product links below</h1>
+    <textarea type="url" name="product-link" rows="10" cols="100" id="product-link"></textarea>
+    <br>
+    <br>
+    <button>Track</button>
+</body>
+<script>
+    document.querySelector('button').addEventListener('click',async () => {
+        
+        let link = document.querySelector('#product-link').value;
+        let data = {
+            productLinks: link
+        }
+        // console.log(link);
+
+        let response = await fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-control': 'no-cache'
+            },
+            body: JSON.stringify(data)
+        });
+
+        console.log(response.status)
+
+        if(response.status === 200)
+            window.open('/download');
+    });
+</script>
+</html>
