@@ -11,14 +11,18 @@
     <br>
     <br>
     <button>Track</button>
+    <p id="prompt" style="opacity: 0;">Gathering prices...</p>
 </body>
 <script>
     document.querySelector('button').addEventListener('click',async () => {
         
+        document.querySelector('#prompt').style.opacity = '1';
         let link = document.querySelector('#product-link').value;
         let data = {
             productLinks: link
         }
+        
+        localStorage.setItem('links', link);
 
         let response = await fetch('/api', {
             method: 'POST',
@@ -31,8 +35,13 @@
 
         console.log(response.status)
 
+        document.querySelector('#prompt').style.opacity = '0';
+
         if(response.status === 200)
             window.open('/download');
     });
+
+    document.querySelector('textarea').value = localStorage.getItem('links');
+    
 </script>
 </html>
