@@ -15,14 +15,14 @@
 </body>
 <script>
     document.querySelector('button').addEventListener('click',async () => {
-        document.querySelector('#prompt').style.opacity = '1';
-
-        let link = document.querySelector('#product-link').value;
         
-        localStorage.setItem('links', link);
+        document.querySelector('#prompt').style.opacity = '1';
+        let link = document.querySelector('#product-link').value;
         let data = {
             productLinks: link
         }
+        
+        localStorage.setItem('links', link);
 
         let response = await fetch('/api', {
             method: 'POST',
@@ -40,16 +40,6 @@
         if(response.status === 200)
             window.open('/download');
     });
-
-    function getCookie(cookieName)
-    {
-        let cookies = document.cookie;
-        let start = cookies.indexOf(cookieName);
-        let end = cookies.indexOf(';');
-        let cookiePair = cookies.slice(start, end);
-        let cookieValue = cookiePair.slice(cookiePair.indexOf('=') + 1);
-        return cookieValue;
-    }
 
     document.querySelector('textarea').value = localStorage.getItem('links');
     
