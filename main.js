@@ -11,9 +11,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/download', (req, res) => {
-    console.log('in /download: ');
-    const file = './upload-folder/prices.csv';
-    console.log(file);
+    const file = './uploads/prices.csv';
+    console.log('Downloading file now...');
     res.download(file);
 });
 

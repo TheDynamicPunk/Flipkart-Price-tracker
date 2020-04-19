@@ -45,9 +45,9 @@ async function scrape(links) {
 
         const j2cp = new json2csv();
         const csv = j2cp.parse(trackerData);
-        console.log(csv);
+
         fs.writeFileSync('./uploads/prices.csv', csv);
-        console.log('scraped!');
+        console.log('Scraping complete!');
 
         return 200;
     }
