@@ -1,40 +1,55 @@
-const request = require('request');
+const request = require('request-promise');
 const cheerio = require('cheerio');
+const json2csv = require('json2csv').Parser;
 const fs = require('fs');
 
-function scrape(links) {
+async function scrape(links) {
+    
     if(links)
     {
-        const writeStream = fs.createWriteStream('upload-folder/prices.csv');
-        writeStream.write(`S.No, Product Name, Price, Delivery Date \n`);
-
+        let trackerData = [];
         let linksArray = links.split(',');
 
-        var counter = 0;
+        for (item of linksArray) {
+            try {
+                const response = await request({
+                    uri: item,
+                    headers: {
+                        "Accept-Encoding": "gzip, deflate, br",
+                        "Accept-Language": "en-US,en;q=0.5"
+                    },
+                    gzip: true
+                });
 
-        linksArray.forEach( item => {
-            
-            request(item, (error, response, html) => {
-                if(response.statusCode === 200)
-                {
-                    counter += 1;
-                    let data = cheerio.load(html);
-                    let productName = data('._35KyD6').text();
-                    let price = data('._3qQ9m1').text();
-                    console.log('before: '+price);
-                    if(price.indexOf(',') != -1)
-                        price = price.replace(/,/g,'');
-                    console.log('after:' + price);
-                    let deliveryTime = data('._29Zp1s').text();
-        
-                    writeStream.write(`${counter}, ${productName}, ${price}, ${deliveryTime}\n`);
-                }
-                else {
-                    console.log(error);
-                }
-            });
-        });
+                let data = cheerio.load(response);
+                let productName = data('._35KyD6').text();
+                console.log(productName);
+                let price = data('._3qQ9m1').text();
+                price = price.replace(/,/g,'');
+                console.log(price);
+                let deliveryTime = data('._29Zp1s').text();
+                deliveryTime = deliveryTime.replace('?', '');
+                console.log(deliveryTime);
+
+
+                trackerData.push({
+                    Name: productName, 
+                    Price: price, 
+                    'Delivery Estimate': deliveryTime
+                });
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        const j2cp = new json2csv();
+        const csv = j2cp.parse(trackerData);
+        console.log(csv);
+        fs.writeFileSync('./uploads/prices.csv', csv);
         console.log('scraped!');
+
+        return 200;
     }
 }
 

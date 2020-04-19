@@ -11,18 +11,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/download', (req, res) => {
-    setTimeout(() => {
-        console.log('in /download: ');
-        const file = './upload-folder/prices.csv';
-        console.log(file);
-        res.download(file);
-    }, 15000);
+    console.log('in /download: ');
+    const file = './upload-folder/prices.csv';
+    console.log(file);
+    res.download(file);
 });
 
-app.post('/api', (req, res) => {
+app.post('/api', async (req, res) => {
     const links = req.body.productLinks;
-    scrape(links);
-    res.send('succes!');
+    const status = await scrape(links);
+    res.status(status).send('succes!');
 });
 
 app.listen(port, () => {
